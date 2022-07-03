@@ -25,7 +25,8 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	m_Cube(1.f)
 {
 	const float dTheta = 2.0f * PI / float( nflares * 2 );
 	for( int i = 0; i < nflares * 2; i++ )
@@ -56,7 +57,7 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	const Vec2 trl = { float( gfx.ScreenWidth ) / 2.0f,float( gfx.ScreenHeight ) / 2.0f };
+	/*const Vec2 trl = { float( gfx.ScreenWidth ) / 2.0f,float( gfx.ScreenHeight ) / 2.0f };
 	const Mat2 trf = Mat2::Rotation( theta ) * Mat2::Scaling( size );
 	auto vtx( star );
 	for( auto& v : vtx )
@@ -68,5 +69,19 @@ void Game::ComposeFrame()
 	{
 		gfx.DrawLine( *i,*std::next( i ),Colors::White );
 	}
-	gfx.DrawLine( vtx.front(),vtx.back(),Colors::White );
+	gfx.DrawLine( vtx.front(),vtx.back(),Colors::White );*/
+
+	IndexedLineList& lines = m_Cube.GetLines();
+	for (auto& v : lines.vertices)
+	{
+		v+= {0.f,0.f,1.f};
+		m_pst.Transform(v);
+	}
+	
+	for (auto i = lines.indices.cbegin(), j = lines.indices.cend(); i != j; std::advance(i, 2))
+	{
+		gfx.DrawLine(lines.vertices[*i],lines.vertices[*std::next(i)],Colors::White);
+	}
+
+
 }

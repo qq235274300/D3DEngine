@@ -25,6 +25,9 @@
 #include <vector>
 #include "ChiliMath.h"
 
+#include "PubeScreenTransformer.h"
+#include "Cube.h"
+
 class Game
 {
 public:
@@ -51,4 +54,8 @@ private:
 	static constexpr int nflares = 5;
 	static constexpr float size = 100.0f;
 	/********************************/
+
+
+	Cube m_Cube;
+	PubeScreenTransformer m_pst;
 };
