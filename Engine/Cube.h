@@ -3,7 +3,7 @@
 #include <vector>
 #include "IndexedLineList.h"
 //一个正方体 8个点 十二条线 普通绘制需要 12x2  24个记录点
-
+//目前 我们是通过划线（非三角）绘制
 class Cube
 {
 	

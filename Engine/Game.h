@@ -55,7 +55,12 @@ private:
 	static constexpr float size = 100.0f;
 	/********************************/
 
-
+	// Render Cube
 	Cube m_Cube;
 	PubeScreenTransformer m_pst;
+	// Rotator Cube
+	static constexpr float m_RotatorSpeed = PI;
+	float m_xRot = 0.f;
+	float m_yRot = 0.f;
+	float m_zRot = 0.f;
 };

@@ -21,6 +21,7 @@
 #include "MainWindow.h"
 #include "Game.h"
 #include "Mat2.h"
+#include "Mat3.h"
 
 Game::Game( MainWindow& wnd )
 	:
@@ -49,10 +50,37 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if( !wnd.kbd.KeyIsPressed( VK_SPACE ) )
+	const float dt = 1.0 / 60.f;
+	if (wnd.kbd.KeyIsPressed('Q'))
+	{
+		m_xRot = wrap_angle(m_xRot + dt * m_RotatorSpeed);
+	}
+	if (wnd.kbd.KeyIsPressed('W'))
+	{
+		m_yRot = wrap_angle(m_yRot + dt * m_RotatorSpeed);
+	}
+	if (wnd.kbd.KeyIsPressed('E'))
+	{
+		m_zRot = wrap_angle(m_zRot + dt * m_RotatorSpeed);
+	}
+	if (wnd.kbd.KeyIsPressed('A'))
+	{
+		m_xRot = wrap_angle(m_xRot - dt * m_RotatorSpeed);
+	}
+	if (wnd.kbd.KeyIsPressed('S'))
+	{
+		m_yRot = wrap_angle(m_yRot - dt * m_RotatorSpeed);
+	}
+	if (wnd.kbd.KeyIsPressed('D'))
+	{
+		m_zRot = wrap_angle(m_zRot - dt * m_RotatorSpeed);
+	}
+
+
+	/*if( !wnd.kbd.KeyIsPressed( VK_SPACE ) )
 	{
 		theta += vRot;
-	}
+	}*/
 }
 
 void Game::ComposeFrame()
@@ -72,9 +100,14 @@ void Game::ComposeFrame()
 	gfx.DrawLine( vtx.front(),vtx.back(),Colors::White );*/
 
 	IndexedLineList& lines = m_Cube.GetLines();
+	const Mat3 Mat3Rot = !wnd.kbd.KeyIsPressed(VK_CONTROL) ?
+		Mat3::RotationX(m_xRot) * Mat3::RotationY(m_yRot) * Mat3::RotationZ(m_zRot) : Mat3::RotationX(m_yRot) * Mat3::RotationY(m_zRot) * Mat3::RotationZ(m_xRot);
 	for (auto& v : lines.vertices)
 	{
+		//TRS?
+		v *= Mat3Rot;
 		v+= {0.f,0.f,1.f};
+
 		m_pst.Transform(v);
 	}
 	
