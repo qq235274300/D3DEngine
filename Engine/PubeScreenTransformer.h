@@ -1,4 +1,4 @@
-#pragma once
+  #pragma once
 #include "Graphics.h"
 #include "Vec3.h"
 
@@ -15,8 +15,9 @@ public:
 	
 	Vec3& Transform(Vec3& v)
 	{
-		v.x = (v.x + 1.f) * m_xFactor;
-		v.y = (-v.y + 1.f) *  m_yFactor;	
+		const float w = 1.f / v.z;
+		v.x = (v.x * w + 1.f) * m_xFactor;
+		v.y = (-v.y * w + 1.f) *  m_yFactor;	
 		return v;
 	}
 

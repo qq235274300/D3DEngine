@@ -75,6 +75,15 @@ void Game::UpdateModel()
 	{
 		m_zRot = wrap_angle(m_zRot - dt * m_RotatorSpeed);
 	}
+	//ÎïÌåÔ¶½ü
+	if (wnd.kbd.KeyIsPressed('R'))
+	{
+		m_zOffset = m_zOffset - dt * 1.f;
+	}
+	if (wnd.kbd.KeyIsPressed('F'))
+	{
+		m_zOffset = m_zOffset + dt * 1.f;
+	}
 
 
 	/*if( !wnd.kbd.KeyIsPressed( VK_SPACE ) )
@@ -88,7 +97,7 @@ void Game::ComposeFrame()
 	/*const Vec2 trl = { float( gfx.ScreenWidth ) / 2.0f,float( gfx.ScreenHeight ) / 2.0f };
 	const Mat2 trf = Mat2::Rotation( theta ) * Mat2::Scaling( size );
 	auto vtx( star );
-	for( auto& v : vtx )
+	for( auto& v : vtx ) 
 	{
 		v *= trf;
 		v += trl;
@@ -106,7 +115,7 @@ void Game::ComposeFrame()
 	{
 		//TRS?
 		v *= Mat3Rot;
-		v+= {0.f,0.f,1.f};
+		v+= {0.f,0.f, m_zOffset};
 
 		m_pst.Transform(v);
 	}
