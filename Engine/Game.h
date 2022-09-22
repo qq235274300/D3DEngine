@@ -24,9 +24,12 @@
 #include "Vec2.h"
 #include <vector>
 #include "ChiliMath.h"
-
 #include "Scene.h"
 #include "memory.h"
+#include "FrameTimer.h"
+
+#include <string>
+
 
 
 class Game
@@ -42,6 +45,8 @@ private:
 	/********************************/
 	/*  User Functions              */
 	void CycleScenes();
+	void ReverseCycleScenes();
+	void OutputSceneName() const;
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -56,6 +61,8 @@ private:
 	static constexpr int nflares = 5;
 	static constexpr float size = 100.0f;
 	/********************************/
+
+	FrameTimer ft;
 
 	std::vector<std::unique_ptr<Scene>> scenes;
 	std::vector<std::unique_ptr<Scene>>::iterator curScene;

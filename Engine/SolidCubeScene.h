@@ -8,7 +8,10 @@
 class SolidCubeScene : public Scene
 {
 public:
-	SolidCubeScene() = default;
+	SolidCubeScene()
+		:
+		Scene("Solid Cube Different Colored Triangles")
+	{}
 	virtual void Update(const Keyboard& kbd, const Mouse& mouse, const float dt)override;
 	virtual void Draw(Graphics& gfx)override;
 

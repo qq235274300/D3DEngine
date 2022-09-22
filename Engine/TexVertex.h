@@ -10,7 +10,7 @@ public:
 	{
 
 	};
-	TexVertex Interpolate(const TexVertex& target, float alpha)const
+	TexVertex InterpolateTo(const TexVertex& target, float alpha)const
 	{
 		return {
 			pos.InterpolateTo(target.pos,alpha),
@@ -18,9 +18,47 @@ public:
 		};
 	}
 	
-
-
-private:
+	TexVertex& operator+=(const TexVertex& rhs)
+	{
+		pos += rhs.pos;
+		tc += rhs.tc;
+		return *this;
+	}
+	TexVertex operator+(const TexVertex& rhs) const
+	{
+		return TexVertex(*this) += rhs;
+	}
+	TexVertex& operator-=(const TexVertex& rhs)
+	{
+		pos -= rhs.pos;
+		tc -= rhs.tc;
+		return *this;
+	}
+	TexVertex operator-(const TexVertex& rhs) const
+	{
+		return TexVertex(*this) -= rhs;
+	}
+	TexVertex& operator*=(float rhs)
+	{
+		pos *= rhs;
+		tc *= rhs;
+		return *this;
+	}
+	TexVertex operator*(float rhs) const
+	{
+		return TexVertex(*this) *= rhs;
+	}
+	TexVertex& operator/=(float rhs)
+	{
+		pos /= rhs;
+		tc /= rhs;
+		return *this;
+	}
+	TexVertex operator/(float rhs) const
+	{
+		return TexVertex(*this) /= rhs;
+	}
+public:
 	Vec3 pos;
 	Vec2 tc; // texture coordinate
 };

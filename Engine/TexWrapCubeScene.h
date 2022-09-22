@@ -1,16 +1,24 @@
 #pragma once
-
 #include "Scene.h"
-#include "ConcaveHexahedron.h"
+#include "Cube.h"
 #include "PubeScreenTransformer.h"
 #include "Mat3.h"
 
-class ConHexWireScene : public Scene
+class TexWrapCubeScene : public Scene
 {
 public:
-	ConHexWireScene()
+	TexWrapCubeScene(const std::wstring& texname, float texdim)
 		:
-		Scene("Concave Hexahedron Filled Wireframe")
+		sbTex(Surface::FromFile(texname)),
+		cube(1.0f, texdim),
+		Scene(std::string("Textured Cube ") +
+			std::string(texname.begin(), texname.end()) +
+			" Wrapping Dim: " + std::to_string(texdim))
+	{}
+	TexWrapCubeScene(float texdim)
+		:
+		cube(1.0f, texdim),
+		Scene(std::string("Textured Cube Butthole Sauron Wrapping Dim: ") + std::to_string(texdim))
 	{}
 	virtual void Update(const Keyboard& kbd, const Mouse& mouse, const float dt) override
 	{
@@ -49,10 +57,9 @@ public:
 	}
 	virtual void Draw(Graphics& gfx)  override
 	{
+		// NOTE: Changes had to be made because of Vec3 -> TexVertex
 		// generate indexed triangle list
-		auto triangles = hex.GetTriangles();
-		// generate indexed line list
-		auto lines = hex.GetLines();
+		auto triangles = cube.GetTrianglesTex();
 		// generate rotation matrix from euler angles
 		const Mat3 rot =
 			Mat3::RotationX(theta_x) *
@@ -61,50 +68,44 @@ public:
 		// transform from model space -> world (/view) space
 		for (auto& v : triangles.vertices)
 		{
-			v *= rot;
-			v += { 0.0f, 0.0f, offset_z };
+			v.pos *= rot;
+			v.pos += { 0.0f, 0.0f, offset_z };
 		}
-		for (auto& v : lines.vertices)
+		// backface culling test (must be done in world (/view) space)
+		for (size_t i = 0,
+			end = triangles.Triangle.size() / 3;
+			i < end; i++)
 		{
-			v *= rot;
-			v += { 0.0f, 0.0f, offset_z };
+			const Vec3& v0 = triangles.vertices[triangles.Triangle[i * 3]].pos;
+			const Vec3& v1 = triangles.vertices[triangles.Triangle[i * 3 + 1]].pos;
+			const Vec3& v2 = triangles.vertices[triangles.Triangle[i * 3 + 2]].pos;
+			triangles.cullFlag[i] = (v1 - v0) % (v2 - v0) * v0 > 0.0f;
 		}
 		// transform to screen space (includes perspective transform)
 		for (auto& v : triangles.vertices)
 		{
-			pst.Transform(v);
-		}
-		for (auto& v : lines.vertices)
-		{
-			pst.Transform(v);
+			pst.Transform(v.pos);
 		}
 		// draw the mf triangles!
 		for (size_t i = 0,
 			end = triangles.Triangle.size() / 3;
 			i < end; i++)
 		{
-			gfx.DrawTriangle(
-				triangles.vertices[triangles.Triangle[i * 3]],
-				triangles.vertices[triangles.Triangle[i * 3 + 1]],
-				triangles.vertices[triangles.Triangle[i * 3 + 2]],
-				colorSolid);
-		}
-		// draw the mf lines!
-		for (size_t i = 0,
-			end = lines.indices.size() / 2;
-			i < end; i++)
-		{
-			gfx.DrawLine(
-				lines.vertices[lines.indices[i * 2]],
-				lines.vertices[lines.indices[i * 2 + 1]],
-				colorWire);
+			// skip triangles previously determined to be back-facing
+			if (!triangles.cullFlag[i])
+			{
+				gfx.DrawTriangleTexWrap(
+					triangles.vertices[triangles.Triangle[i * 3]],
+					triangles.vertices[triangles.Triangle[i * 3 + 1]],
+					triangles.vertices[triangles.Triangle[i * 3 + 2]],
+					sbTex);
+			}
 		}
 	}
 private:
 	PubeScreenTransformer pst;
-	ConcaveHexahedron hex = ConcaveHexahedron(1.0f);
-	static constexpr Color colorSolid = Colors::Gray;
-	static constexpr Color colorWire = Colors::Magenta;
+	Cube cube ;
+	Surface sbTex = Surface::FromFile(L"Images\\sauron-bhole-100x100.png");
 	static constexpr float dTheta = PI;
 	float offset_z = 2.0f;
 	float theta_x = 0.0f;

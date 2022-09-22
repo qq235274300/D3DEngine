@@ -9,7 +9,10 @@
 class ConHexScene : public Scene
 {
 public:
-	ConHexScene() = default;
+	ConHexScene()
+		:
+		Scene("Concave Hexahedron Nasty Draw Order")
+	{}
 	virtual void Update(const Keyboard& kbd, const  Mouse& mouse, const float dt) override
 	{
 		if (kbd.KeyIsPressed('Q'))

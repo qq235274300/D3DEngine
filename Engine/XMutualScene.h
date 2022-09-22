@@ -8,7 +8,10 @@
 class XMutualScene : public Scene
 {
 public:
-	XMutualScene() = default;
+	XMutualScene()
+		:
+		Scene("Weird X Shape Self Mutual Intersecting Planes Bullshit")
+	{}
 	virtual void Update(const Keyboard& kbd, const Mouse& mouse, const  float dt) override
 	{
 		if (kbd.KeyIsPressed('Q'))

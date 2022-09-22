@@ -6,6 +6,7 @@
 template<class T>
 class  IndexedTriangleList
 {
+public:
 	IndexedTriangleList(std::vector<T> InVertices, std::vector<size_t> InTriangle)
 	{
 		//assert(InVertices.size() > 2);

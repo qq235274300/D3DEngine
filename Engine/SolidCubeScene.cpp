@@ -40,7 +40,7 @@ void SolidCubeScene::Update(const Keyboard& kbd, const Mouse& mouse, const float
 
 void SolidCubeScene::Draw(Graphics& gfx)
 {
-	IndexedTriangleList& Triangles = m_Cube.GetTriangles();
+	IndexedTriangleList<Vec3>& Triangles = m_Cube.GetTriangles();
 	const Mat3 Mat3Rot = 
 		Mat3::RotationX(m_xRot) * Mat3::RotationY(m_yRot) * Mat3::RotationZ(m_zRot);
 	for (auto& v : Triangles.vertices)
