@@ -113,6 +113,13 @@ public:
 	{
 		return _Vec3(*this) *= rhs;
 	}
+	_Vec3	operator%(const _Vec3& rhs) const
+	{
+		return _Vec3(
+			y * rhs.z - z * rhs.y,
+			z * rhs.x - x * rhs.z,
+			x * rhs.y - y * rhs.x);
+	}
 	_Vec3& operator/=(const T& rhs)
 	{
 		x /= rhs;
@@ -131,6 +138,10 @@ public:
 	bool	operator!=(const _Vec3& rhs) const
 	{
 		return !(*this == rhs);
+	}
+	_Vec3	InterpolateTo(const _Vec3& dest, T alpha) const
+	{
+		return *this + (dest - *this) * alpha;
 	}
 public:
 	T z;

@@ -20,14 +20,16 @@
 ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "Mat2.h"
-#include "Mat3.h"
+#include "SolidCubeScene.h"
+#include "CubeOrderScene .h"
+#include "ConHexScene.h"
+#include "ConHexWireScene .h"
+#include "XMutualScene.h"
 
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd ),
-	m_Cube(1.f)
+	gfx( wnd )
 {
 	const float dTheta = 2.0f * PI / float( nflares * 2 );
 	for( int i = 0; i < nflares * 2; i++ )
@@ -38,6 +40,14 @@ Game::Game( MainWindow& wnd )
 			rad * sin( float( i ) * dTheta )
 		);
 	}
+
+	scenes.push_back(std::make_unique<SolidCubeScene>());
+	scenes.push_back(std::make_unique<CubeOrderScene>());
+	scenes.push_back(std::make_unique<ConHexScene>());
+	scenes.push_back(std::make_unique<ConHexWireScene>());
+	scenes.push_back(std::make_unique<XMutualScene>());
+	curScene = scenes.begin();
+	
 }
 
 void Game::Go()
@@ -51,45 +61,24 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = 1.0 / 60.f;
-	if (wnd.kbd.KeyIsPressed('Q'))
+	
+	while (!wnd.kbd.KeyIsEmpty())
 	{
-		m_xRot = wrap_angle(m_xRot + dt * m_RotatorSpeed);
+		const auto e = wnd.kbd.ReadKey();
+		if (e.GetCode() == VK_TAB && e.IsPress())
+		{
+			CycleScenes();
+		}	
 	}
-	if (wnd.kbd.KeyIsPressed('W'))
-	{
-		m_yRot = wrap_angle(m_yRot + dt * m_RotatorSpeed);
-	}
-	if (wnd.kbd.KeyIsPressed('E'))
-	{
-		m_zRot = wrap_angle(m_zRot + dt * m_RotatorSpeed);
-	}
-	if (wnd.kbd.KeyIsPressed('A'))
-	{
-		m_xRot = wrap_angle(m_xRot - dt * m_RotatorSpeed);
-	}
-	if (wnd.kbd.KeyIsPressed('S'))
-	{
-		m_yRot = wrap_angle(m_yRot - dt * m_RotatorSpeed);
-	}
-	if (wnd.kbd.KeyIsPressed('D'))
-	{
-		m_zRot = wrap_angle(m_zRot - dt * m_RotatorSpeed);
-	}
-	//ÎïÌåÔ¶½ü
-	if (wnd.kbd.KeyIsPressed('R'))
-	{
-		m_zOffset = m_zOffset - dt * 1.f;
-	}
-	if (wnd.kbd.KeyIsPressed('F'))
-	{
-		m_zOffset = m_zOffset + dt * 1.f;
-	}
+	(*curScene)->Update(wnd.kbd, wnd.mouse, dt);
+}
 
-
-	/*if( !wnd.kbd.KeyIsPressed( VK_SPACE ) )
+void Game::CycleScenes()
+{
+	if (++curScene == scenes.end())
 	{
-		theta += vRot;
-	}*/
+		curScene = scenes.begin();
+	}
 }
 
 void Game::ComposeFrame()
@@ -108,22 +97,7 @@ void Game::ComposeFrame()
 	}
 	gfx.DrawLine( vtx.front(),vtx.back(),Colors::White );*/
 
-	IndexedLineList& lines = m_Cube.GetLines();
-	const Mat3 Mat3Rot = !wnd.kbd.KeyIsPressed(VK_CONTROL) ?
-		Mat3::RotationX(m_xRot) * Mat3::RotationY(m_yRot) * Mat3::RotationZ(m_zRot) : Mat3::RotationX(m_yRot) * Mat3::RotationY(m_zRot) * Mat3::RotationZ(m_xRot);
-	for (auto& v : lines.vertices)
-	{
-		//TRS?
-		v *= Mat3Rot;
-		v+= {0.f,0.f, m_zOffset};
-
-		m_pst.Transform(v);
-	}
 	
-	for (auto i = lines.indices.cbegin(), j = lines.indices.cend(); i != j; std::advance(i, 2))
-	{
-		gfx.DrawLine(lines.vertices[*i],lines.vertices[*std::next(i)],Colors::White);
-	}
-
+	(*curScene)->Draw(gfx);
 
 }

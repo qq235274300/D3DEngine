@@ -25,8 +25,9 @@
 #include <vector>
 #include "ChiliMath.h"
 
-#include "PubeScreenTransformer.h"
-#include "Cube.h"
+#include "Scene.h"
+#include "memory.h"
+
 
 class Game
 {
@@ -40,6 +41,7 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void CycleScenes();
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -55,13 +57,6 @@ private:
 	static constexpr float size = 100.0f;
 	/********************************/
 
-	// Render Cube
-	Cube m_Cube;
-	PubeScreenTransformer m_pst;
-	// Rotator Cube
-	static constexpr float m_RotatorSpeed = PI;
-	float m_zOffset = 5.f;
-	float m_xRot = 0.f;
-	float m_yRot = 0.f;
-	float m_zRot = 0.f;
+	std::vector<std::unique_ptr<Scene>> scenes;
+	std::vector<std::unique_ptr<Scene>>::iterator curScene;
 };
