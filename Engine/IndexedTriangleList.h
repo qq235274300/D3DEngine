@@ -7,16 +7,16 @@ template<class T>
 class  IndexedTriangleList
 {
 public:
-	IndexedTriangleList(std::vector<T> InVertices, std::vector<size_t> InTriangle)
+	IndexedTriangleList(std::vector<T> InVertices, std::vector<size_t> InIndices)
 	{
 		//assert(InVertices.size() > 2);
-		assert(InTriangle.size() % 3 == 0);
+		assert(InIndices.size() % 3 == 0);
 		vertices = std::move(InVertices);
-		Triangle = std::move(InTriangle);
-		cullFlag.resize(Triangle.size() /3 , false);
+		indices = std::move(InIndices);
+		//cullFlag.resize(Triangle.size() /3 , false);
 	}
 	
 	std::vector<T> vertices;
-	std::vector<size_t> Triangle;
-	std::vector<bool> cullFlag;
+	std::vector<size_t> indices;
+	
 };

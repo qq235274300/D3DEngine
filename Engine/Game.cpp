@@ -20,56 +20,16 @@
 ******************************************************************************************/
 #include "MainWindow.h"
 #include "Game.h"
-#include "SolidCubeScene.h"
-#include "CubeOrderScene .h"
-#include "ConHexScene.h"
-#include "ConHexWireScene .h"
-#include "XMutualScene.h"
-#include "TexCubeScene.h"
-#include "TexWrapCubeScene.h"
-#include "FoldedCubeScene.h"
-#include "FoldedCubeWrapScene.h"
-#include "CubeSkinnedScene.h"
-
+#include "CubeSkinScene.h"
 #include <sstream>
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd )
+	wnd(wnd),
+	gfx(wnd)
 {
-	const float dTheta = 2.0f * PI / float( nflares * 2 );
-	for( int i = 0; i < nflares * 2; i++ )
-	{
-		const float rad = (i % 2 == 0) ? radOuter : radInner;
-		star.emplace_back(
-			rad * cos( float( i ) * dTheta ),
-			rad * sin( float( i ) * dTheta )
-		);
-	}
-
-	//scenes.push_back(std::make_unique<SolidCubeScene>());
-	//scenes.push_back(std::make_unique<CubeOrderScene>());
-	//scenes.push_back(std::make_unique<ConHexScene>());
-	//scenes.push_back(std::make_unique<ConHexWireScene>());
-	//scenes.push_back(std::make_unique<XMutualScene>());
-	//scenes.push_back(std::make_unique<TexCubeScene>());
-	//scenes.push_back(std::make_unique<TexWrapCubeScene>());
-	scenes.push_back(std::make_unique<TexCubeScene>(2.0f));
-	scenes.push_back(std::make_unique<TexWrapCubeScene>(2.0f));
-	scenes.push_back(std::make_unique<TexWrapCubeScene>(6.0f));
-
-	scenes.push_back(std::make_unique<TexWrapCubeScene>(L"images\\wood.jpg", 2.0f));
-
-	scenes.push_back(std::make_unique<FoldedCubeScene>());
-	scenes.push_back(std::make_unique<FoldedCubeWrapScene>());
-
-	scenes.push_back(std::make_unique<CubeSkinnedScene>(L"images\\dice_skin.png"));
-	scenes.push_back(std::make_unique<CubeSkinnedScene>(L"images\\office_skin.jpg"));
-	scenes.push_back(std::make_unique<CubeSkinnedScene>(L"images\\office_skin_lores.png"));
-
+	scenes.push_back(std::make_unique<CubeSkinScene>(gfx, L"images\\office_skin.jpg"));
 	curScene = scenes.begin();
-	
 	OutputSceneName();
 }
 
@@ -84,7 +44,7 @@ void Game::Go()
 void Game::UpdateModel()
 {
 	const float dt = ft.Mark();
-	
+	// cycle through scenes when tab is pressed
 	while (!wnd.kbd.KeyIsEmpty())
 	{
 		const auto e = wnd.kbd.ReadKey();
@@ -104,6 +64,7 @@ void Game::UpdateModel()
 			wnd.Kill();
 		}
 	}
+	// update scene
 	(*curScene)->Update(wnd.kbd, wnd.mouse, dt);
 }
 
@@ -142,21 +103,6 @@ void Game::OutputSceneName() const
 
 void Game::ComposeFrame()
 {
-	/*const Vec2 trl = { float( gfx.ScreenWidth ) / 2.0f,float( gfx.ScreenHeight ) / 2.0f };
-	const Mat2 trf = Mat2::Rotation( theta ) * Mat2::Scaling( size );
-	auto vtx( star );
-	for( auto& v : vtx ) 
-	{
-		v *= trf;
-		v += trl;
-	}
-	for( auto i = vtx.cbegin(),end = std::prev( vtx.cend() ); i != end; i++ )
-	{
-		gfx.DrawLine( *i,*std::next( i ),Colors::White );
-	}
-	gfx.DrawLine( vtx.front(),vtx.back(),Colors::White );*/
-
-	
-	(*curScene)->Draw(gfx);
-
+	// draw scene
+	(*curScene)->Draw();
 }
