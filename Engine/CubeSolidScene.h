@@ -1,25 +1,30 @@
 #pragma once
-
 #include "Scene.h"
 #include "Cube.h"
 #include "Mat3.h"
 #include "Pipeline.h"
-#include "TextureEffect.h"
+#include "SolidEffect.h"
 
-// scene demonstrating skinned cube
-class CubeSkinScene : public Scene
+class CubeSolidScene : public Scene
 {
 public:
-	typedef Pipeline<TextureEffect> Pipeline;
+	typedef Pipeline<SolidEffect> Pipeline;
 	typedef Pipeline::Vertex Vertex;
 public:
-	CubeSkinScene(Graphics& gfx, const std::wstring& filename)
+	CubeSolidScene(Graphics& gfx)
 		:
-		itlist(Cube::GetSkinned<Vertex>()),
+		itlist(Cube::GetPlainIndependentFaces<Vertex>()),
 		pipeline(gfx),
-		Scene("Textured Cube skinned using texture: " + std::string(filename.begin(), filename.end()))
+		Scene("Colored cube vertex gradient scene")
 	{
-		pipeline.effect.ps.BindTexture(filename);
+		const Color colors[] = {
+			Colors::Red,Colors::Green,Colors::Blue,Colors::Magenta,Colors::Yellow,Colors::Cyan
+		};
+
+		for (int i = 0; i < itlist.vertices.size(); i++)
+		{
+			itlist.vertices[i].color = colors[i / 4];
+		}
 	}
 	virtual void Update(Keyboard& kbd, Mouse& mouse, float dt) override
 	{
