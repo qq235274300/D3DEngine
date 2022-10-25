@@ -65,6 +65,7 @@ public:
 	}
 	virtual void Draw() override
 	{
+		pipeline.BeginFrame();
 		// generate rotation matrix from euler angles
 		// translation from offset
 		const Mat3 rot =
@@ -73,8 +74,8 @@ public:
 			Mat3::RotationZ(theta_z);
 		const Vec3 trans = { 0.0f,0.0f,offset_z };
 		// set pipeline transform
-		pipeline.BindRotation(rot);
-		pipeline.BindTranslation(trans);
+		pipeline.effect.vs.BindRotation(rot);
+		pipeline.effect.vs.BindTranslation(trans);
 		// render triangles
 		pipeline.Draw(itlist);
 	}

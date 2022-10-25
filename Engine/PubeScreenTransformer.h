@@ -12,18 +12,25 @@ public:
 	{
 		
 	}
-	
-	Vec3& Transform(Vec3& v)
+	template<class Vertex>
+	Vertex& Transform(Vertex& v)
 	{
-		const float w = 1.f / v.z;
-		v.x = (v.x * w + 1.f) * m_xFactor;
-		v.y = (-v.y * w + 1.f) *  m_yFactor;	
+		const float zInverse = 1.0f / v.pos.z;
+
+		v *= zInverse;
+		
+		v.pos.x = (v.pos.x  + 1.f) * m_xFactor;
+		v.pos.y = (-v.pos.y  + 1.f) *  m_yFactor;
+
+		v.pos.z = zInverse;
+
 		return v;
 	}
 
-	Vec3 GetTransformed(const Vec3& v)
+	template<class Vertex>
+	Vertex GetTransformed(const Vertex& v)
 	{
-		return Transform(Vec3(v));
+		return Transform(Vertex(v));
 	}
 
 private:
