@@ -1,6 +1,7 @@
 #pragma once
 #include "Pipeline.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 // solid color attribute not interpolated
 class SolidEffect
 {
@@ -66,7 +67,7 @@ public:
 	};
 
 	typedef DefaultVertexShader<Vertex> VertexShader;
-
+	typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
 	// invoked for each pixel of a triangle
 	// takes an input of attributes that are the
 	// result of interpolating vertex attributes
@@ -82,5 +83,6 @@ public:
 	};
 public:
 	PixelShader ps;
+	GeometryShader gs;
 	VertexShader vs;
 };

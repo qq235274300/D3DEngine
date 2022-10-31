@@ -2,6 +2,7 @@
 
 #include "Pipeline.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 // color gradient effect between vertices
 class VertexColorEffect
 {
@@ -71,6 +72,7 @@ public:
 	};
 
 	typedef DefaultVertexShader<Vertex> VertexShader;
+	typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
 
 	// invoked for each pixel of a triangle
 	// takes an input of attributes that are the
@@ -87,5 +89,6 @@ public:
 	};
 public:
 	PixelShader ps;
+	GeometryShader gs;
 	VertexShader vs;
 };

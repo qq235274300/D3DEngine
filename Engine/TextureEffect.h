@@ -2,6 +2,7 @@
 
 #include "Pipeline.h"
 #include "DefaultVertexShader.h"
+#include "DefaultGeometryShader.h"
 // basic texture effect
 class TextureEffect
 {
@@ -71,6 +72,7 @@ public:
 	};
 
 	typedef DefaultVertexShader<Vertex> VertexShader;
+	typedef DefaultGeometryShader<VertexShader::Output> GeometryShader;
 
 	// invoked for each pixel of a triangle
 	// takes an input of attributes that are the
@@ -85,7 +87,7 @@ public:
 			return pTex->GetPixel(
 				(unsigned int)std::min(in.t.x * tex_width + 0.5f, tex_xclamp),
 				(unsigned int)std::min(in.t.y * tex_height + 0.5f, tex_yclamp)
-			);
+			); 
 		}
 		void BindTexture(const std::wstring& filename)
 		{
@@ -104,5 +106,6 @@ public:
 	};
 public:
 	PixelShader ps;
+	GeometryShader gs;
 	VertexShader vs;
 };
